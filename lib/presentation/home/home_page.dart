@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:object_box_example/application/core/object_box/object_box_bloc.dart';
+import 'package:object_box_example/application/core/object_box/object_box_bloc.dart';
 import 'package:object_box_example/application/core/theme/theme_bloc.dart';
+import 'package:object_box_example/domain/object_box/person_model.dart';
 import 'package:object_box_example/presentation/add_or_edit_pop_up/add_edit_popup.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,10 +18,22 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
         leading: const _ThemeIconButton(),
       ),
-      body: ListView.builder(
-        itemCount: 30,
-        itemBuilder: (context, index) {
-          return const _ChildList();
+      body: BlocBuilder<ObjectBoxBloc, ObjectBoxState>(
+        builder: (context, state) {
+          if (state is AllPersonsState && state.list.isNotEmpty) {
+            return ListView.builder(
+              itemCount: state.list.length,
+              itemBuilder: (context, index) {
+                return _ChildList(
+                  person: state.list[index],
+                );
+              },
+            );
+          } else {
+            return const Center(
+              child: Text("Person list is empty"),
+            );
+          }
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -35,8 +50,11 @@ class HomePage extends StatelessWidget {
 }
 
 class _ChildList extends StatelessWidget {
+  final Person person;
+
   const _ChildList({
     Key? key,
+    required this.person,
   }) : super(key: key);
 
   @override
@@ -46,7 +64,11 @@ class _ChildList extends StatelessWidget {
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (context) {},
+            onPressed: (context) {
+              context.read<ObjectBoxBloc>().add(
+                    DeletePersonEvent(id: person.id),
+                  );
+            },
             icon: Icons.delete,
             label: 'Delete',
             backgroundColor: Colors.red,
@@ -55,7 +77,10 @@ class _ChildList extends StatelessWidget {
             onPressed: (context) {
               showDialog(
                 context: context,
-                builder: (context) => CustomPopup(),
+                builder: (context) => CustomPopup(
+                  isEdit: true,
+                  person: person,
+                ),
               );
             },
             icon: Icons.edit,
@@ -64,10 +89,10 @@ class _ChildList extends StatelessWidget {
           ),
         ],
       ),
-      child: const ListTile(
-        leading: Icon(Icons.ac_unit),
-        title: Text("Aswanath"),
-        subtitle: Text("Kerala"),
+      child: ListTile(
+        leading: const Icon(Icons.ac_unit),
+        title: Text(person.name),
+        subtitle: Text(person.place),
       ),
     );
   }
