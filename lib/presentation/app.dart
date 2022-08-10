@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:object_box_example/application/core/object_box/object_box_bloc.dart';
 import 'package:object_box_example/application/core/theme/theme_bloc.dart';
 import 'package:object_box_example/infrastructure/object_box/object_box_repository.dart';
+import 'package:object_box_example/main.dart';
 import 'package:object_box_example/presentation/home/home_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ObjectBoxBloc(
-            objectBoxRepository: ObjectBoxRepository(),
+            objectBoxRepository: ObjectBoxRepository(boxStore: store),
           )..add(GetAllPersonsEvent()),
         ),
       ],

@@ -8,7 +8,7 @@ class CustomPopup extends StatefulWidget {
   final bool isEdit;
   final Person? person;
 
-  CustomPopup({
+  const CustomPopup({
     Key? key,
     this.isEdit = false,
     this.person,
