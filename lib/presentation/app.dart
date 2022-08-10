@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:object_box_example/application/core/object_box/object_box_bloc.dart';
 import 'package:object_box_example/application/core/theme/theme_bloc.dart';
+import 'package:object_box_example/infrastructure/object_box/object_box_repository.dart';
 import 'package:object_box_example/presentation/home/home_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -12,6 +14,11 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<ThemeBloc>(
           create: (context) => ThemeBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ObjectBoxBloc(
+            objectBoxRepository: ObjectBoxRepository(),
+          )..add(GetAllPersonsEvent()),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
